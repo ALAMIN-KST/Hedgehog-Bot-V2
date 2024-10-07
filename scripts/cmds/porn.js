@@ -1,90 +1,60 @@
-const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
-
 module.exports = {
   config: {
     name: "porn",
     aliases: ["sex"],
-    author: " ミ★𝐒𝐎𝐍𝐈𝐂✄𝐄𝐗𝐄 3.0★彡", // don't change credits 
-    version: "3.0",
-    cooldowns: 5,
+    version: "1.1",
+    author: "ミ★𝐒𝐎𝐍𝐈𝐂✄𝐄𝐗𝐄 3.0★彡",
+    countDown: 5,
     role: 0,
-    shortDescription: {
-      en: ""
-    },
-    longDescription: {
-      en: "get bot owner info"
-    },
+    shortDescription: "Cartoon video ",
+    longDescription: "send you cartoon video porn",
     category: "18+",
-    guide: {
-      en: "{p}{n}"
+    guide: "{p}{n}",
+  },
+
+  sentVideos: [],
+
+  onStart: async function ({ api, event, message }) {
+    const senderID = event.senderID;
+
+    const loadingMessage = await message.reply({
+      body: "💿 | 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐂𝐚𝐫𝐭𝐨𝐨𝐧 𝐯𝐢𝐝𝐞𝐨 𝐩𝐥𝐞𝐚𝐬𝐞 𝐰𝐚𝐢𝐭...",
+    });
+
+    const link = [
+"https://i.imgur.com/AsN45cz.mp4",
+"https://i.imgur.com/6X0Mx6C.mp4",
+"https://tinyurl.com/yqq3fheg",
+"https://tinyurl.com/ys3gdj42",
+"https://tinyurl.com/yvn9xdsd",
+"https://tinyurl.com/ym8mj5y8",
+"https://tinyurl.com/yoxgllel",
+"https://tinyurl.com/yssxsd5f",
+"https://tinyurl.com/yr5jecua",
+"https://tinyurl.com/yr8npjfw",
+"https://tinyurl.com/yw459g5e",
+    ];
+
+    const availableVideos = link.filter(video => !this.sentVideos.includes(video));
+
+    if (availableVideos.length === 0) {
+      this.sentVideos = [];
+    }
+
+    const randomIndex = Math.floor(Math.random() * availableVideos.length);
+    const randomVideo = availableVideos[randomIndex];
+
+    this.sentVideos.push(randomVideo);
+
+    if (senderID !== null) {
+      message.reply({
+        body: '🌶| 𝗖𝗮𝗿𝘁𝗼𝗼𝗻 𝘃𝗶𝗱𝗲𝗼 𝗹𝗼𝗮𝗱𝗲𝗱 𝘀𝘂𝗰𝗰𝗲𝘀𝘀𝗳𝘂𝗹𝗹𝘆\n━━━━━━━━━━━━━━━━\n💻| 𝗦𝘁𝗼𝗰𝗸 : 20𝗠𝗕\n━━━━━━━━━━━━━━━━\n🎯| 𝗢𝘄𝗻𝗲𝗿 𝗽𝗿𝗼𝗱𝘂𝗰𝘁𝗶𝗼𝗻 : https://facebook.com/sonic.shisui.1492\n━━━━━━━━━━━━━━━━\n📲| 𝗧𝗵𝗮𝗻𝗸𝘀 𝗳𝗼𝗿 𝘄𝗮𝘁𝗰𝗵𝗶𝗻𝗴',
+        attachment: await global.utils.getStreamFromURL(randomVideo),
+      });
+
+      setTimeout(() => {
+        api.unsendMessage(loadingMessage.messageID);
+      }, 5000);
     }
   },
-  onStart: async function ({ api, event }) {
-      try {
-        const loadingMessage = "💿| 𝐃𝐨𝐰𝐧𝐥𝐨𝐚𝐝 𝐨𝐟 𝐭𝐡𝐢𝐬 𝐯𝐢𝐝𝐞𝐨 𝐩𝐥𝐞𝐚𝐬𝐞 𝐰𝐚𝐢𝐭...";
-        await api.sendMessage(loadingMessage, event.threadID);
-
-        const ownerInfo = {
-          name: '𝙋𝙊𝙍𝙉𝙊𝙂𝙍𝘼𝙋𝙃𝙔',
-          gender: '𝘾𝙖𝙧𝙩𝙤𝙤𝙣🍑',
-          stock: '𝟚𝟘𝙈𝘽',
-          sex: '𝙀𝙭𝙘𝙞𝙩𝙖𝙩𝙞𝙤𝙣🌶😼',
-          facebookLink: '𝘾𝙧𝙚𝙖𝙩𝙤𝙧 𝙤𝙛 𝙩𝙝𝙞𝙨 𝙘𝙢𝙙: https://www.facebook.com/sonic.shisui.1492',
-          bio: '𝙊𝙧𝙞𝙜𝙞𝙣𝙚 𝘾𝙖𝙢𝙚𝙧𝙤𝙪𝙣𝙖𝙞𝙨'
-        };
-
-        const videoUrl = 
-["https://i.imgur.com/5uIZ5yd.mp4",
-"https://i.imgur.com/usomB8N.mp4",
-"https://i.imgur.com/3tRGH3L.mp4",
-"https://i.imgur.com/wPWfT9L.mp4",]     
-          
-        const tmpFolderPath = path.join(__dirname, 'tmp');
-
-        if (!fs.existsSync(tmpFolderPath)) {
-          fs.mkdirSync(tmpFolderPath);
-        }
-
-        const videoResponse = await axios.get(videoUrl, { responseType: 'arraybuffer' });
-        const videoPath = path.join(tmpFolderPath, 'owner_video.mp4');
-
-        fs.writeFileSync(videoPath, Buffer.from(videoResponse.data, 'binary'));
-
-        const response = `
-          𝗼𝘄𝗻𝗲𝗿 𝗶𝗻𝗳𝗼𝗿𝗺𝗮𝘁𝗶𝗼𝗻🍀:
-❍⌇─➭ 
-(◍•ᴗ•◍)𝗡𝗔𝗠𝗘 : ${ownerInfo.name}
-❍⌇─➭ 
-♀𝗚𝗘𝗡𝗥𝗘♂: ${ownerInfo.gender}
-❍⌇─➭ 
-𝐒𝐓𝐎𝐂𝐊: ${ownerInfo.hobby}
-❍⌇─➭ 
-𝐒𝐄𝐗💞: ${ownerInfo.relationship}
-❍⌇─➭ 
- 𝗙𝗔𝗖𝗘𝗕𝗢𝗢𝗞🔗: ${ownerInfo.facebookLink}
-❍⌇─➭ 
-      ◈ 𝗦𝗧𝗔𝗧𝗨𝗦 ◈: ${ownerInfo.bio}🇨🇲       `;
-
-        await api.sendMessage({
-          body: response,
-          attachment: fs.createReadStream(videoPath)
-        }, event.threadID);
-      } catch (error) {
-        console.error('Error in owner command:', error);
-        api.sendMessage('An error occurred while processing the command.', event.threadID);
-      }
-    },
-    onChat: async function({ api, event }) {
-      try {
-        const lowerCaseBody = event.body.toLowerCase();
-        
-        if (lowerCaseBody === "porno" || lowerCaseBody.startsWith("{p}owner")) {
-          await this.onStart({ api, event });
-        }
-      } catch (error) {
-        console.error('Error in onChat function:', error);
-      }
-    }
-  }
+};
